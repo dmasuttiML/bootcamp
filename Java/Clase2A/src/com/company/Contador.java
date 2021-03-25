@@ -1,3 +1,5 @@
+package com.company;
+
 public class Contador {
     private int valor;
 

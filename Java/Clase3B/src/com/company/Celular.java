@@ -1,4 +1,6 @@
-public class Celular implements Precedable<Celular>{
+package com.company;
+
+public class Celular implements Precedable<Celular> {
     private int numero;
     private Persona titular;
 

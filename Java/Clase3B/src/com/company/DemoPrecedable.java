@@ -1,4 +1,8 @@
-public class Main {
+package com.company;
+
+import com.company.Celular;
+
+public class DemoPrecedable {
     public static void main(String[] args) {
         Precedable precedables[] = new Precedable[5];
 

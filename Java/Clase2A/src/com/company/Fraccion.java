@@ -1,3 +1,5 @@
+package com.company;
+
 public class Fraccion {
 
     public static double sumar(double a, double b) {

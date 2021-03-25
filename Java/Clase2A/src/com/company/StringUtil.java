@@ -1,3 +1,5 @@
+package com.company;
+
 public class StringUtil
 {
 	// Retorna una cadena compuesta por n caracteres c

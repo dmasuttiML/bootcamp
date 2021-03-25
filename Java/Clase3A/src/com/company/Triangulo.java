@@ -1,3 +1,7 @@
+package com.company;
+
+import com.company.FiguraGeometrica;
+
 public class Triangulo extends FiguraGeometrica {
     private int base;
     private int altura;

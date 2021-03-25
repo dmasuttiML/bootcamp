@@ -1,3 +1,5 @@
+package com.company;
+
 public class Persona implements Precedable<Persona> {
     private String nombre;
     private int dni;
