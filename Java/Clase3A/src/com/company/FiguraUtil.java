@@ -1,8 +1,5 @@
 package com.company;
 
-import com.company.Circulo;
-import com.company.FiguraGeometrica;
-
 public class FiguraUtil {
     public static double areaPromedio(FiguraGeometrica[] arr) {
         double sum = 0;
