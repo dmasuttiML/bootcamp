@@ -9,16 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CodigoMorseController {
-    @Autowired
-    private CodigoMorseService codigoMorseService;
-
-    public CodigoMorseController(CodigoMorseService codigoMorseService) {
-        this.codigoMorseService = codigoMorseService;
-    }
-
     @GetMapping("/decodificar")
-    public Frase decodificar(@RequestParam(defaultValue = "") String codigo)
-    {
-        return new Frase(codigo, codigoMorseService.decodificar(codigo));
+    public Frase decodificar(@RequestParam(defaultValue = "") String codigo) {
+        return new Frase(codigo, CodigoMorseService.decodificar(codigo));
     }
 }

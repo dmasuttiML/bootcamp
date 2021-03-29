@@ -9,7 +9,7 @@ import java.util.Set;
 @Service
 public class CodigoMorseService {
 
-    public String decodificar(String codigo) {
+    public static String decodificar(String codigo) {
         String[] palabrasMorse = codigo.split("   ");
         ArrayList<String> palabrasAscii = new ArrayList<String>();
 
@@ -26,7 +26,7 @@ public class CodigoMorseService {
         return String.join(" ", palabrasAscii);
     }
 
-    private String morseAAscii(String morseBuscado) {
+    private static String morseAAscii(String morseBuscado) {
         Hashtable<String, String> equivalencias = obtenerEquivalencias();
 
         Set<String> claves = equivalencias.keySet();
