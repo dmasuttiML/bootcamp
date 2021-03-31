@@ -2,6 +2,7 @@ package com.example.calorias.services;
 
 import com.example.calorias.dtos.IngredienteDTO;
 import com.example.calorias.dtos.PlatoDTO;
+import com.example.calorias.exceptionsHandler.IngredientNotFound;
 import com.example.calorias.repositories.IngredienteRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +15,12 @@ public class CaloriaServiceImpl implements CaloriaService {
     }
 
     @Override
-    public PlatoDTO calculate(PlatoDTO platoDTO){
+    public PlatoDTO calculate(PlatoDTO platoDTO) throws IngredientNotFound {
         float caloriasTotales = 0;
 
         for (IngredienteDTO i: platoDTO.getIngredientes()) {
             IngredienteDTO ingrediente = ingredienteRepository.buscarIngredientePorNombre(i.getName());
+
             if(ingrediente != null){
                 // Calorias por ingrediente.
                 i.setCalories(ingrediente.getCalories());
@@ -29,6 +31,7 @@ public class CaloriaServiceImpl implements CaloriaService {
                     platoDTO.setMasCalorico(i);
                 }
             }
+            else throw new IngredientNotFound("No se encontro el ingrediente: " + i.getName());
         }
 
         platoDTO.setCaloriasTotales(caloriasTotales);

@@ -1,13 +1,14 @@
 package com.example.calorias.controllers;
 
+import com.example.calorias.dtos.ErrorDTO;
 import com.example.calorias.dtos.PlatoDTO;
+import com.example.calorias.exceptionsHandler.IngredientNotFound;
 import com.example.calorias.services.CaloriaService;
 import com.example.calorias.services.CaloriaServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/calorias")
@@ -17,15 +18,22 @@ public class CaloriaController {
     private CaloriaServiceImpl caloriaService;
 
     @PostMapping("/calculate")
-    public PlatoDTO calculate(@RequestBody PlatoDTO plato){
-        return caloriaService.calculate(plato);
+    public ResponseEntity<PlatoDTO> calculate(@RequestBody PlatoDTO plato) throws IngredientNotFound {
+        return ResponseEntity.ok(caloriaService.calculate(plato));
     }
 
     @PostMapping("/calculateall")
-    public PlatoDTO[] calculateAll(@RequestBody PlatoDTO[] platos){
+    public ResponseEntity<PlatoDTO[]> calculateAll(@RequestBody PlatoDTO[] platos) throws IngredientNotFound {
         for (PlatoDTO plato: platos) {
             plato = caloriaService.calculate(plato);
         }
-        return platos;
+
+        return ResponseEntity.ok(platos);
+    }
+
+    @ExceptionHandler(IngredientNotFound.class )
+    public ResponseEntity<ErrorDTO> handleException(IngredientNotFound e) {
+        ErrorDTO errorDTO = new ErrorDTO("Ingrediente invalido", e.getMessage());
+        return ResponseEntity.badRequest().body(errorDTO);
     }
 }
