@@ -1,0 +1,17 @@
+sequenceDiagram
+    User->>+ClientController: DELETE eliminarCliente(String username)
+    alt valid String username
+        ClientController->>+ClientService: eliminarCliente(String username)
+        ClientService->>+ClientRepository: delete(String username)
+        alt client found ok
+            ClientRepository-->>-ClientService: Boolean true
+            ClientService-->>-ClientController: Boolean true
+            ClientController-->>-User: ResponseEntity("Client deleted", HttpStatus.OK)
+        else client not found
+            ClientRepository-->>GlobalExceptionHandler: Exception()
+            GlobalExceptionHandler-->>User: ResponseEntity(HttpStatus.BAD_REQUEST)
+        end
+    else invalid String username
+        ClientController-->>GlobalExceptionHandler: Exception()
+        GlobalExceptionHandler-->>User: ResponseEntity(HttpStatus.BAD_REQUEST)
+    end

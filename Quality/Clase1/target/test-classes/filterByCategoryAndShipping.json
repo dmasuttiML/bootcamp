@@ -1,0 +1,82 @@
+[
+  {
+    "productId": 1,
+    "name": "Desmalezadora",
+    "category": "Herramientas",
+    "brand": "Makita",
+    "price": 9600.0,
+    "quantity": 4,
+    "freeShipping": "NO",
+    "prestige": "****"
+  },
+  {
+    "productId": 2,
+    "name": "Taladro",
+    "category": "Herramientas",
+    "brand": "Black & Decker",
+    "price": 12500.0,
+    "quantity": 7,
+    "freeShipping": "SI",
+    "prestige": "****"
+  },
+  {
+    "productId": 3,
+    "name": "Soldadora",
+    "category": "Herramientas",
+    "brand": "Black & Decker",
+    "price": 7215.0,
+    "quantity": 10,
+    "freeShipping": "SI",
+    "prestige": "***"
+  },
+  {
+    "productId": 8,
+    "name": "Smartwatch",
+    "category": "Celulares",
+    "brand": "Noga",
+    "price": 1900.0,
+    "quantity": 20,
+    "freeShipping": "NO",
+    "prestige": "**"
+  },
+  {
+    "productId": 9,
+    "name": "Remera",
+    "category": "Indumentaria",
+    "brand": "Taverniti",
+    "price": 2300.0,
+    "quantity": 2,
+    "freeShipping": "NO",
+    "prestige": "***"
+  },
+  {
+    "productId": 10,
+    "name": "Chomba",
+    "category": "Indumentaria",
+    "brand": "Taverniti",
+    "price": 2400.0,
+    "quantity": 6,
+    "freeShipping": "NO",
+    "prestige": "***"
+  },
+  {
+    "productId": 11,
+    "name": "Medias",
+    "category": "Indumentaria",
+    "brand": "Mistral",
+    "price": 500.0,
+    "quantity": 8,
+    "freeShipping": "NO",
+    "prestige": "*"
+  },
+  {
+    "productId": 12,
+    "name": "Short",
+    "category": "Indumentaria",
+    "brand": "Lacoste",
+    "price": 3900.0,
+    "quantity": 9,
+    "freeShipping": "SI",
+    "prestige": "***"
+  }
+]

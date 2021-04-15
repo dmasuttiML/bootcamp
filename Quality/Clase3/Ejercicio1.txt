@@ -1,0 +1,17 @@
+sequenceDiagram
+    User->>+ClientController: POST crearCliente(ClientDto clientDto)
+    alt valid ClientDTO clientDto
+        ClientController->>+ClientService: crearCliente(ClienteDto clienteDto)
+        ClientService->>+ClientRepository: save(ClienteDto clienteDto)
+        alt client saved ok
+            ClientRepository-->>-ClientService: ClienteDto clienteDto
+            ClientService-->>-ClientController: ClienteDto clienteDto
+            ClientController-->>-User: ResponseEntity(clienteDto, HttpStatus.CREATED)
+        else client not saved
+            ClientRepository-->>GlobalExceptionHandler: Exception()
+            GlobalExceptionHandler-->>User: ResponseEntity(HttpStatus.BAD_REQUEST)
+        end
+    else invalid ClientDTO clientDto
+        ClientController-->>GlobalExceptionHandler: Exception()
+        GlobalExceptionHandler-->>User: ResponseEntity(HttpStatus.BAD_REQUEST)
+    end

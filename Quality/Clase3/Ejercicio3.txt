@@ -1,0 +1,17 @@
+sequenceDiagram
+    User->>+ClientController: PUT updateCliente(ClientDto clientDto, Integer clientId)
+    alt valid ClientDTO clientDto
+        ClientController->>+ClientService: updateCliente(ClienteDto clienteDto, Integer clientId)
+        ClientService->>+ClientRepository: update(ClienteDto clienteDto, Integer clientId)
+        alt client updated ok
+            ClientRepository-->>-ClientService: ClienteDto clienteDto
+            ClientService-->>-ClientController: ClienteDto clienteDto
+            ClientController-->>-User: ResponseEntity(clienteDto, HttpStatus.UPDATED)
+        else client not updated (invalid id, invalid clientDto)
+            ClientRepository-->>GlobalExceptionHandler: Exception()
+            GlobalExceptionHandler-->>User: ResponseEntity(HttpStatus.BAD_REQUEST)
+        end
+    else invalid ClientDTO clientDto
+        ClientController-->>GlobalExceptionHandler: Exception()
+        GlobalExceptionHandler-->>User: ResponseEntity(HttpStatus.BAD_REQUEST)
+    end

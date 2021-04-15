@@ -1,0 +1,17 @@
+sequenceDiagram
+    User->>+ClientController: GET consultarClientes()
+    alt valid String username
+        ClientController->>+ClientService: consultarClientes()
+        ClientService->>+ClientRepository: getAllClients(String username)
+        alt clients found ok
+            ClientRepository-->>-ClientService: List<ClientDto> clientDtos
+            ClientService-->>-ClientController: List<ClientDto> clientDtos
+            ClientController-->>-User: ResponseEntity(List<ClientDto> clientDtos, HttpStatus.OK)
+        else clients not found
+            ClientRepository-->>GlobalExceptionHandler: Exception()
+            GlobalExceptionHandler-->>User: ResponseEntity(HttpStatus.NOT_FOUND)
+        end
+    else invalid String username
+        ClientController-->>GlobalExceptionHandler: Exception()
+        GlobalExceptionHandler-->>User: ResponseEntity(HttpStatus.BAD_REQUEST)
+    end
