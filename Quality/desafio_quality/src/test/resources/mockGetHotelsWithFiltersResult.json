@@ -1,0 +1,22 @@
+[
+  {
+    "hotelCode": "CP-0004",
+    "name": "Central Plaza",
+    "place": "Medellín",
+    "roomType": "Múltiple",
+    "price": 8600.0,
+    "dateFrom": "01/03/2021",
+    "dateTo": "17/04/2021",
+    "reserved": false
+  },
+  {
+    "hotelCode": "CP-0002",
+    "name": "Central Plaza 2",
+    "place": "Medellín",
+    "roomType": "Doble",
+    "price": 6400.0,
+    "dateFrom": "10/02/2021",
+    "dateTo": "20/03/2021",
+    "reserved": false
+  }
+]

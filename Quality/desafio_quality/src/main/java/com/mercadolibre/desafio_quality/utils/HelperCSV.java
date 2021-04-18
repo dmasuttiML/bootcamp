@@ -9,29 +9,23 @@ import java.util.List;
 import java.util.Scanner;
 
 public class HelperCSV {
-    private static final String pathResources = "/src/main/resources/";
 
     public static List<String[]> readCSV(String fileName) {
         List<String[]> dataLines = new ArrayList<>();
         Scanner reader = null;
-        File file = new File("");
 
         try {
-            file = new File(file.getAbsolutePath() + pathResources, fileName);
-
-            reader = new Scanner(file);
+            reader = new Scanner(new File(fileName));
 
             while (reader.hasNextLine()) {
                 dataLines.add(reader.nextLine().split(","));
             }
         }
         catch (Exception e) {
-            throw new InternalServerErrorException("Error al leer datos");
+            throw new InternalServerErrorException("Error reading data", e);
         }
         finally {
-            if(reader != null){
-                reader.close();
-            }
+            if(reader != null) reader.close();
         }
 
         return dataLines;
@@ -39,18 +33,15 @@ public class HelperCSV {
 
     public static void writeCSV(List<String[]> dataLines, String fileName) {
         PrintWriter writer = null;
-        File file = new File("");
 
         try {
-            file = new File(file.getAbsolutePath() + pathResources, fileName);
-
-            writer = new PrintWriter(file);
+            writer = new PrintWriter(fileName);
             dataLines.stream()
                      .map(d -> String.join(",", d))
                      .forEach(writer::println);
         }
         catch (Exception e) {
-            throw new InternalServerErrorException("Error al persistir datos");
+            throw new InternalServerErrorException("Failed to persist data", e);
         }
         finally {
             if(writer != null){
