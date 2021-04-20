@@ -13,13 +13,6 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
-	@ExceptionHandler(NoHandlerFoundException.class)
-	public ResponseEntity<ApiError> noHandlerFoundException(HttpServletRequest req, NoHandlerFoundException ex) {
-		ApiError apiError = new ApiError("route_not_found", String.format("Route %s not found", req.getRequestURI()), HttpStatus.NOT_FOUND.value());
-		return ResponseEntity.status(apiError.getStatus())
-							 .body(apiError);
-	}
-
 	@ExceptionHandler(value = { ApiException.class })
 	protected ResponseEntity<ApiError> handleApiException(ApiException e) {
 		ApiError apiError = new ApiError(e.getCode(), e.getDescription(), e.getStatusCode());

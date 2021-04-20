@@ -10,11 +10,11 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
-public class HotelDTO {
-    private String hotelCode;
-    private String name;
-    private String place;
-    private String roomType;
+public class FlightDTO {
+    private String flightNumber;
+    private String origin;
+    private String destination;
+    private String seatType;
     private Double price;
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
@@ -24,6 +24,4 @@ public class HotelDTO {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate dateTo;
-
-    private Boolean reserved;
 }

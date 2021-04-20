@@ -1,0 +1,10 @@
+{
+  "hotelCode": "BG-0004",
+  "name": "Bocagrande",
+  "place": "Cartagena",
+  "roomType": "Múltiple",
+  "price": 9370.0,
+  "dateFrom": "17/04/2021",
+  "dateTo": "12/06/2021",
+  "reserved": true
+}

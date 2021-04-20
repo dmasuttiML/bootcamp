@@ -1,75 +1,100 @@
 package com.mercadolibre.desafio_quality.repositories;
 
+import com.mercadolibre.desafio_quality.dtos.BookingDTO;
 import com.mercadolibre.desafio_quality.dtos.HotelDTO;
-import com.mercadolibre.desafio_quality.exceptions.InternalServerErrorException;
-import com.mercadolibre.desafio_quality.utils.HelperCSV;
+import com.mercadolibre.desafio_quality.exceptions.BookingNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
-public class HotelRepositoryImpl implements HotelRepository {
-    private String fileName;
+public class HotelRepositoryImpl extends CSVRepository<HotelDTO> implements HotelRepository {
 
     public HotelRepositoryImpl(@Value("${hotels_file}") String fileName) {
-        this.fileName = fileName;
+        super(fileName);
+    }
+
+    @Override
+    protected HotelDTO parseLine(String[] line) {
+        HotelDTO hotelDTO = new HotelDTO();
+
+        hotelDTO.setHotelCode(line[0]);
+        hotelDTO.setName(line[1]);
+        hotelDTO.setPlace(line[2]);
+        hotelDTO.setRoomType(line[3]);
+        hotelDTO.setPrice(Double.parseDouble(line[4].replace("$","").replace(".","")));
+        hotelDTO.setDateFrom(LocalDate.parse(line[5], DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        hotelDTO.setDateTo(LocalDate.parse(line[6], DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        hotelDTO.setReserved(line[7].equals("SI"));
+
+        return hotelDTO;
+    }
+
+    @Override
+    protected String[] makeLine(HotelDTO hotelDTO) {
+        String[] line = new String[8];
+
+        line[0] = hotelDTO.getHotelCode();
+        line[1] = hotelDTO.getName();
+        line[2] = hotelDTO.getPlace();
+        line[3] = hotelDTO.getRoomType();
+        line[4] = String.format("$%.0f", hotelDTO.getPrice());
+        line[5] = hotelDTO.getDateFrom().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        line[6] = hotelDTO.getDateTo().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        line[7] = hotelDTO.getReserved() ? "SI" : "NO";
+
+        return line;
     }
 
     @Override
     public List<HotelDTO> getHotels() {
-        return loadHotels();
+        return loadData();
     }
 
     @Override
     public List<HotelDTO> getHotels(LocalDate dateFrom, LocalDate dateTo, String destination) {
-        return loadHotels().stream()
-                           .filter(h -> dateFrom.isAfter(h.getDateFrom()) || dateFrom.isEqual(h.getDateFrom()))
-                           .filter(h -> dateTo.isBefore(h.getDateTo()) || dateTo.isEqual(h.getDateTo()))
-                           .filter(h -> h.getPlace().equals(destination))
-                           .collect(Collectors.toList());
+        return loadData().stream()
+                         .filter(h -> h.getPlace().equals(destination))
+                         .filter(h -> dateFrom.isBefore(h.getDateFrom()) || dateFrom.isEqual(h.getDateFrom()))
+                         .filter(h -> dateTo.isAfter(h.getDateTo()) || dateTo.isEqual(h.getDateTo()))
+                         .collect(Collectors.toList());
     }
 
     @Override
     public List<String> getDestinations() {
-        return loadHotels().stream()
-                           .map(h -> h.getPlace())
-                           .distinct()
-                           .collect(Collectors.toList());
+        return loadData().stream()
+                         .map(HotelDTO::getPlace)
+                         .distinct()
+                         .collect(Collectors.toList());
     }
 
-    private List<HotelDTO> loadHotels(){
-        List<HotelDTO> hotels = new ArrayList<>();
-        List<String[]> dataLines = HelperCSV.readCSV(fileName);
+    @Override
+    public HotelDTO generateBooking(BookingDTO bookingDTO) {
+        List<HotelDTO> hotels = loadData();
 
-        try {
-            // Elimino la cabecera.
-            if(dataLines.size() > 0)
-                dataLines.remove(0);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate dateFrom = LocalDate.parse(bookingDTO.getDateFrom(), formatter);
+        LocalDate dateTo = LocalDate.parse(bookingDTO.getDateTo(), formatter);
 
-            for (String[] line: dataLines) {
-                HotelDTO hotelDTO = new HotelDTO();
+        HotelDTO hotel = hotels.stream()
+                               .filter(h -> h.getHotelCode().equals(bookingDTO.getHotelCode()) &&
+                                            h.getRoomType().equalsIgnoreCase(bookingDTO.getRoomType()) &&
+                                            !h.getReserved())
+                               .filter(h -> dateFrom.isAfter(h.getDateFrom()) || dateFrom.isEqual(h.getDateFrom()))
+                               .filter(h -> dateTo.isBefore(h.getDateTo()) || dateTo.isEqual(h.getDateTo()))
+                               .findFirst().orElse(null);
 
-                hotelDTO.setHotelCode(line[0]);
-                hotelDTO.setName(line[1]);
-                hotelDTO.setPlace(line[2]);
-                hotelDTO.setRoomType(line[3]);
-                hotelDTO.setPrice(Double.parseDouble(line[4].replace("$","").replace(".","")));
-                hotelDTO.setDateFrom(LocalDate.parse(line[5], DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                hotelDTO.setDateTo(LocalDate.parse(line[6], DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                hotelDTO.setReserved(line[7].equals("SI"));
-
-                hotels.add(hotelDTO);
-            }
-        }
-        catch (Exception e){
-            throw new InternalServerErrorException("Database inconsistency", e);
+        if(hotel != null) {
+            if(!hotel.getPlace().equals(bookingDTO.getDestination()))
+                throw new BookingNotFoundException("The destination does not match the hotel location");
+            hotel.setReserved(true);
+            saveData(hotels);
         }
 
-        return hotels;
+        return hotel;
     }
 }

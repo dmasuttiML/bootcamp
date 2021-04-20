@@ -1,9 +1,6 @@
 package com.mercadolibre.desafio_quality.exceptions;
 
 public class ApiException extends RuntimeException {
-
-	private static final long serialVersionUID = 1L;
-
 	private final String code;
 	private final String description;
 	private final Integer statusCode;

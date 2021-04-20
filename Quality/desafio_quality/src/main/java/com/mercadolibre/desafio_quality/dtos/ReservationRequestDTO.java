@@ -5,8 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class PaymentMethodDTO {
-    private String type;
-    private String number;
-    private Integer dues;
+public class ReservationRequestDTO {
+    private String userName;
+    private ReservationDTO flightReservation;
 }

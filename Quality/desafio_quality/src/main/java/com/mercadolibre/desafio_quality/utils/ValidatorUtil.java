@@ -6,7 +6,6 @@ import java.time.format.DateTimeParseException;
 import java.util.regex.Pattern;
 
 public class ValidatorUtil {
-
     public static boolean isEmail(String email)
     {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
@@ -21,7 +20,6 @@ public class ValidatorUtil {
 
     public static boolean isDNI(String dni){
         String emailRegex = "[0-9]+";
-
         Pattern pat = Pattern.compile(emailRegex);
 
         return dni != null && dni.length() == 8 && pat.matcher(dni).matches();

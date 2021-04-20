@@ -9,13 +9,14 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BookingDTO {
+public class ReservationDTO {
     private String dateFrom;
     private String dateTo;
+    private String origin;
     private String destination;
-    private String hotelCode;
-    private Integer peopleAmount;
-    private String roomType;
+    private String flightNumber;
+    private Integer seats;
+    private String seatType;
     private List<PeopleDTO> people;
     private PaymentMethodDTO paymentMethod;
 }

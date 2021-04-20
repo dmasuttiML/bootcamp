@@ -5,11 +5,11 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class BookingResponseDTO {
+public class ReservationResponseDTO {
     private String userName;
     private Double amount;
     private Double interest;
     private Double total;
-    private BookingDTO booking;
+    private ReservationDTO flightReservation;
     private StatusCodeDTO statusCode;
 }
