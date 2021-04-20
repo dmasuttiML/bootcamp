@@ -8,8 +8,4 @@ public class InternalServerErrorException extends ApiException {
 	public InternalServerErrorException(String message, Throwable e) {
 		super(INTERNAL_ERROR_CODE, message, HttpStatus.INTERNAL_SERVER_ERROR.value(), e);
 	}
-
-	public InternalServerErrorException(String message) {
-		super(INTERNAL_ERROR_CODE, message, HttpStatus.INTERNAL_SERVER_ERROR.value());
-	}
 }

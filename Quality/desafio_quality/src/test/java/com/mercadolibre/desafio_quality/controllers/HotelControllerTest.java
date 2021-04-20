@@ -2,14 +2,13 @@ package com.mercadolibre.desafio_quality.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mercadolibre.desafio_quality.dtos.BookingResponseDTO;
 import com.mercadolibre.desafio_quality.dtos.HotelDTO;
 import com.mercadolibre.desafio_quality.exceptions.ApiError;
-import com.mercadolibre.desafio_quality.exceptions.InternalServerErrorException;
 import com.mercadolibre.desafio_quality.exceptions.InvalidArgumentException;
 import com.mercadolibre.desafio_quality.repositories.HotelRepository;
 import com.mercadolibre.desafio_quality.utils.FileMockPath;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +16,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -42,26 +44,47 @@ class HotelControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @BeforeAll
-    static void setUp(){
-    }
-
     @Test
     @DisplayName("Get hotels")
     public void getHotels() throws Exception {
-        List<HotelDTO> mock =  objectMapper.readValue(new File(FileMockPath.FILE_HOTELS_GET_ALL),
-                                                      new TypeReference<>() {});
+        List<HotelDTO> mock = objectMapper.readValue(new File(FileMockPath.FILE_HOTELS_GET_ALL),
+                                                     new TypeReference<>() {});
 
         when(hotelRepository.getHotels()).thenReturn(mock);
 
         MvcResult mvcResult = mockMvc.perform(get("/hotels"))
-                                     .andDo(print())
                                      .andExpect(status().isOk())
                                      .andReturn();
 
         List<HotelDTO> response = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(), new TypeReference<>() {});
 
         Assertions.assertEquals(mock, response);
+    }
+
+    @Test
+    @DisplayName("Generate booking")
+    public void generateBooking() throws Exception {
+        HotelDTO mockHotel = objectMapper.readValue(new File(FileMockPath.FILE_HOTEL_BOOKING),
+                                                    new TypeReference<>() {});
+        List<String> mockDestinations = objectMapper.readValue(new File(FileMockPath.FILE_HOTELS_DESTINATIONS),
+                                                               new TypeReference<>() {});
+        BookingResponseDTO expected = objectMapper.readValue(new File(FileMockPath.FILE_BOOKING_RESPONSE),
+                                                             new TypeReference<>() {});
+
+        when(hotelRepository.getDestinations()).thenReturn(mockDestinations);
+        when(hotelRepository.generateBooking(any())).thenReturn(mockHotel);
+
+        String body = Files.readString(Path.of(FileMockPath.FILE_BOOKING_REQUEST));
+
+        MvcResult mvcResult = mockMvc.perform(post("/booking")
+                                              .content(body)
+                                              .contentType(MediaType.APPLICATION_JSON_VALUE))
+                                     .andExpect(status().isOk())
+                                     .andReturn();
+        BookingResponseDTO response = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(),
+                                                             new TypeReference<>() {});
+
+        Assertions.assertEquals(expected, response);
     }
 
     @Test

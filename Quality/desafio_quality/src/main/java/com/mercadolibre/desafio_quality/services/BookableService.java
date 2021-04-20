@@ -45,6 +45,7 @@ public abstract class BookableService {
             if(paymentMethodDTO.getDues() != 1)
                 throw new InvalidArgumentException("Invalid amount of dues for debit");
         }
+        String number = paymentMethodDTO.getNumber();
     }
 
     protected StatusCodeDTO getStatusCode() {
