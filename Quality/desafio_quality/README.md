@@ -38,4 +38,4 @@ US 0006. Finished.
     
 ## Line coverage
 
-(covered.png?raw=true "Covered")
+<img src=covered.png/>
