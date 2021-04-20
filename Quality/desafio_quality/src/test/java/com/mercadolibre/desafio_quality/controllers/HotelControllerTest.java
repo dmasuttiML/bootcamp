@@ -122,4 +122,44 @@ class HotelControllerTest {
         Assertions.assertEquals("Invalid argument", response.getMessage());
         Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
     }
+
+    @Test
+    @DisplayName("Invalid people amount exception")
+    public void invalidPeopleAmountException() throws Exception {
+        String body = Files.readString(Path.of(FileMockPath.FILE_BOOKING_REQUEST));
+
+        body = body.replace("\"peopleAmount\" : 2", "\"peopleAmount\" : \"DOS\"");
+        MvcResult mvcResult = mockMvc.perform(post("/booking")
+                                     .content(body)
+                                     .contentType(MediaType.APPLICATION_JSON_VALUE))
+                                     .andExpect(status().isBadRequest())
+                                     .andReturn();
+
+        ApiError response = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(),
+                                                    new TypeReference<>() {});
+
+        Assertions.assertEquals("invalid_argument", response.getError());
+        Assertions.assertEquals("The number of people must be a numerical value", response.getMessage());
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
+    }
+
+    @Test
+    @DisplayName("Invalid parse integer exception")
+    public void invalidParseIntegerException() throws Exception {
+        String body = Files.readString(Path.of(FileMockPath.FILE_BOOKING_REQUEST));
+
+        body = body.replace("\"dues\" : 6", "\"dues\" : \"DOS\"");
+        MvcResult mvcResult = mockMvc.perform(post("/booking")
+                .content(body)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is5xxServerError())
+                .andReturn();
+
+        ApiError response = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(),
+                new TypeReference<>() {});
+
+        Assertions.assertEquals("internal_error", response.getError());
+        Assertions.assertEquals("Internal server error", response.getMessage());
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatus());
+    }
 }

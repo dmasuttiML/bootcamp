@@ -8,8 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/*
+* Utility class for working with CSV files
+* */
 public class HelperCSV {
-
+    /*
+    * Read a CSV file with the path passed as an argument.
+    * Returns a list of String[] with the information obtained.
+    * */
     public static List<String[]> readCSV(String fileName) {
         List<String[]> dataLines = new ArrayList<>();
         Scanner reader = null;
@@ -31,6 +37,9 @@ public class HelperCSV {
         return dataLines;
     }
 
+    /*
+    * Write the information passed by argument in a csv file with the path "fileName"
+    * */
     public static void writeCSV(List<String[]> dataLines, String fileName) {
         PrintWriter writer = null;
 

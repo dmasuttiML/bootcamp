@@ -20,6 +20,9 @@ public class FlightRepositoryImpl extends CSVRepository<FlightDTO> implements Fl
         super(fileName);
     }
 
+    /*
+     * Function that converts a String[] into a FlightDTO
+     * */
     @Override
     protected FlightDTO parseLine(String[] line) {
         FlightDTO flightDTO = new FlightDTO();
@@ -35,6 +38,9 @@ public class FlightRepositoryImpl extends CSVRepository<FlightDTO> implements Fl
         return flightDTO;
     }
 
+    /*
+     * Function that converts a FlightDTO into a String[]
+     * */
     @Override
     protected String[] makeLine(FlightDTO flightDTO) {
         String[] line = new String[7];
@@ -50,11 +56,17 @@ public class FlightRepositoryImpl extends CSVRepository<FlightDTO> implements Fl
         return line;
     }
 
+    /*
+     * Returns all available flights.
+     * */
     @Override
     public List<FlightDTO> getFlights() {
         return loadData();
     }
 
+    /*
+     * Returns available flights filtered by dateFrom, dateTo, origin and destination.
+     * */
     @Override
     public List<FlightDTO> getFlights(LocalDate dateFrom, LocalDate dateTo, String origin, String destination) {
         return loadData().stream()
@@ -64,6 +76,9 @@ public class FlightRepositoryImpl extends CSVRepository<FlightDTO> implements Fl
                          .collect(Collectors.toList());
     }
 
+    /*
+     * Returns all available origins.
+     * */
     @Override
     public List<String> getOrigins() {
         return loadData().stream()
@@ -72,6 +87,9 @@ public class FlightRepositoryImpl extends CSVRepository<FlightDTO> implements Fl
                          .collect(Collectors.toList());
     }
 
+    /*
+     * Returns all available destinations.
+     * */
     @Override
     public List<String> getDestinations() {
         return loadData().stream()
@@ -80,6 +98,10 @@ public class FlightRepositoryImpl extends CSVRepository<FlightDTO> implements Fl
                          .collect(Collectors.toList());
     }
 
+    /*
+     * Generates a flight reservation and returns the reserved flight.
+     * In case of not being available the hotel returns null.
+     * */
     @Override
     public FlightDTO generateReservation(ReservationDTO reservationDTO) {
         List<FlightDTO> flights = loadData();

@@ -12,6 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/*
+* Service in charge of managing hotel business rules
+* */
 @Service
 public class HotelServiceImpl extends BookableService implements HotelService {
 
@@ -23,6 +26,11 @@ public class HotelServiceImpl extends BookableService implements HotelService {
     @Autowired
     private HotelRepository hotelRepository;
 
+    /*
+    * Get a list of hotels.
+    * If no parameters are passed to it, it returns the complete list.
+    * If the for "dateFrom", "dateTo" and "destination" are passed to it, it returns a list filtered based on these.
+    * */
     @Override
     public List<HotelDTO> getHotels(Map<String, String> params) {
         List<HotelDTO> hotels = null;
@@ -49,6 +57,11 @@ public class HotelServiceImpl extends BookableService implements HotelService {
         return hotels;
     }
 
+    /*
+     * Generate a hotel reservation.
+     * Input parameter: BookingRequestDTO.
+     * Return a BookingResponseDTO.
+     */
     @Override
     public BookingResponseDTO generateBooking(BookingRequestDTO bookingRequestDTO) {
         validateEmail(bookingRequestDTO.getUserName());
@@ -78,6 +91,9 @@ public class HotelServiceImpl extends BookableService implements HotelService {
         return bookingResponseDTO;
     }
 
+    /*
+    * Performs the validations of the booking.
+    * */
     private void validateBooking(BookingDTO booking){
         LocalDate dateFrom = getAndValidateDate(booking.getDateFrom());
         LocalDate dateTo = getAndValidateDate(booking.getDateTo());
@@ -92,11 +108,17 @@ public class HotelServiceImpl extends BookableService implements HotelService {
         booking.getPeople().forEach(this::validatePeople);
     }
 
+    /*
+    * Validate that the destination exists
+    * */
     private void validateDestination(String destination){
         if(!hotelRepository.getDestinations().contains(destination))
             throw new InvalidArgumentException("The chosen destination does not exist");
     }
 
+    /*
+    * Validate that the room type is correct.
+    * */
     private void validateRoomType(String roomType, Integer peopleAmount){
         boolean valid = true;
         switch(roomType.toUpperCase()){

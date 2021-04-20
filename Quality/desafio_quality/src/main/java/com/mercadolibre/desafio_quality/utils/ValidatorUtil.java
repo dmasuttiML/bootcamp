@@ -1,11 +1,14 @@
 package com.mercadolibre.desafio_quality.utils;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.regex.Pattern;
 
+/*
+* Utility class for generic validations.
+* */
 public class ValidatorUtil {
+    /*
+    * Validate if a string has an email form.
+    * */
     public static boolean isEmail(String email)
     {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
@@ -18,6 +21,9 @@ public class ValidatorUtil {
         return email != null && pat.matcher(email).matches();
     }
 
+    /*
+    * Validate if a string has an DNI form.
+    * */
     public static boolean isDNI(String dni){
         String emailRegex = "[0-9]+";
         Pattern pat = Pattern.compile(emailRegex);

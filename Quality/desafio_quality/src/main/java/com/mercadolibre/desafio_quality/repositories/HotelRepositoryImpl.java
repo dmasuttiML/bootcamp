@@ -11,6 +11,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/*
+* Repository for interaction with hotels.
+* */
 @Repository
 public class HotelRepositoryImpl extends CSVRepository<HotelDTO> implements HotelRepository {
 
@@ -18,6 +21,9 @@ public class HotelRepositoryImpl extends CSVRepository<HotelDTO> implements Hote
         super(fileName);
     }
 
+    /*
+    * Function that converts a String[] into a HotelDTO
+    * */
     @Override
     protected HotelDTO parseLine(String[] line) {
         HotelDTO hotelDTO = new HotelDTO();
@@ -34,6 +40,9 @@ public class HotelRepositoryImpl extends CSVRepository<HotelDTO> implements Hote
         return hotelDTO;
     }
 
+    /*
+     * Function that converts a HotelDTO into a String[]
+     * */
     @Override
     protected String[] makeLine(HotelDTO hotelDTO) {
         String[] line = new String[8];
@@ -50,20 +59,31 @@ public class HotelRepositoryImpl extends CSVRepository<HotelDTO> implements Hote
         return line;
     }
 
+    /*
+    * Returns all available hotels.
+    * */
     @Override
     public List<HotelDTO> getHotels() {
-        return loadData();
+        return loadData().stream()
+                         .filter(h -> !h.getReserved())
+                         .collect(Collectors.toList());
     }
 
+    /*
+     * Returns available hotels filtered by dateFrom, dateTo and destination.
+     * */
     @Override
     public List<HotelDTO> getHotels(LocalDate dateFrom, LocalDate dateTo, String destination) {
         return loadData().stream()
-                         .filter(h -> h.getPlace().equals(destination))
+                         .filter(h -> h.getPlace().equals(destination) && !h.getReserved())
                          .filter(h -> dateFrom.isBefore(h.getDateFrom()) || dateFrom.isEqual(h.getDateFrom()))
                          .filter(h -> dateTo.isAfter(h.getDateTo()) || dateTo.isEqual(h.getDateTo()))
                          .collect(Collectors.toList());
     }
 
+    /*
+    * Returns all available destinations.
+    * */
     @Override
     public List<String> getDestinations() {
         return loadData().stream()
@@ -72,6 +92,10 @@ public class HotelRepositoryImpl extends CSVRepository<HotelDTO> implements Hote
                          .collect(Collectors.toList());
     }
 
+    /*
+     * Generates a hotel reservation and returns the reserved hotel.
+     * In case of not being available the hotel returns null.
+     * */
     @Override
     public HotelDTO generateBooking(BookingDTO bookingDTO) {
         List<HotelDTO> hotels = loadData();

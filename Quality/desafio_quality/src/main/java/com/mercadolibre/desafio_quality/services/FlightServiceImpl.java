@@ -12,6 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * Service in charge of managing flight business rules
+ * */
 @Service
 public class FlightServiceImpl extends BookableService implements FlightService {
 
@@ -24,6 +27,12 @@ public class FlightServiceImpl extends BookableService implements FlightService 
     @Autowired
     FlightRepository flightRepository;
 
+    /*
+     * Get a list of flights.
+     * If no parameters are passed to it, it returns the complete list.
+     * If the for "dateFrom", "dateTo", "origin" and "destination" are passed to it,
+     * it returns a list filtered based on these.
+     * */
     @Override
     public List<FlightDTO> getFlights(Map<String, String> params) {
         List<FlightDTO> flights = null;
@@ -53,6 +62,11 @@ public class FlightServiceImpl extends BookableService implements FlightService 
         return flights;
     }
 
+    /*
+     * Generate a flight reservation.
+     * Input parameter: ReservationRequestDTO.
+     * Return a ReservationResponseDTO.
+     */
     @Override
     public ReservationResponseDTO generateReservation(ReservationRequestDTO reservationRequestDTO) {
         validateEmail(reservationRequestDTO.getUserName());
@@ -82,6 +96,9 @@ public class FlightServiceImpl extends BookableService implements FlightService 
         return reservationResponseDTO;
     }
 
+    /*
+     * Performs the validations of the reservation.
+     * */
     private void validateReservation(ReservationDTO reservationDTO) {
         LocalDate dateFrom = getAndValidateDate(reservationDTO.getDateFrom());
         LocalDate dateTo = getAndValidateDate(reservationDTO.getDateTo());
@@ -96,11 +113,17 @@ public class FlightServiceImpl extends BookableService implements FlightService 
         validatePaymentMethod(reservationDTO.getPaymentMethod());
     }
 
+    /*
+     * Validate that the destination exists
+     * */
     private void validateOrigin(String origin){
         if(!flightRepository.getOrigins().contains(origin))
             throw new InvalidArgumentException("The chosen origin does not exist");
     }
 
+    /*
+     * Validate that the destination exists
+     * */
     private void validateDestination(String destination){
         if(!flightRepository.getDestinations().contains(destination))
             throw new InvalidArgumentException("The chosen destination does not exist");

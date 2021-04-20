@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mercadolibre.desafio_quality.dtos.FlightDTO;
 import com.mercadolibre.desafio_quality.dtos.ReservationResponseDTO;
+import com.mercadolibre.desafio_quality.exceptions.ApiError;
 import com.mercadolibre.desafio_quality.repositories.FlightRepository;
 import com.mercadolibre.desafio_quality.utils.FileMockPath;
 import org.junit.jupiter.api.Assertions;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -86,5 +88,45 @@ class FlightControllerTest {
                                                                  new TypeReference<>() {});
 
         Assertions.assertEquals(expected, response);
+    }
+
+    @Test
+    @DisplayName("Invalid seats exception")
+    public void invalidPeopleAmountException() throws Exception {
+        String body = Files.readString(Path.of(FileMockPath.FILE_RESERVATION_REQUEST));
+
+        body = body.replace("\"seats\": 2", "\"seats\" : \"DOS\"");
+        MvcResult mvcResult = mockMvc.perform(post("/flight-reservation")
+                                     .content(body)
+                                     .contentType(MediaType.APPLICATION_JSON_VALUE))
+                                     .andExpect(status().isBadRequest())
+                                     .andReturn();
+
+        ApiError response = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(),
+                                                   new TypeReference<>() {});
+
+        Assertions.assertEquals("invalid_argument", response.getError());
+        Assertions.assertEquals("The number of people must be a numerical value", response.getMessage());
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
+    }
+
+    @Test
+    @DisplayName("Invalid parse integer exception")
+    public void invalidParseIntegerException() throws Exception {
+        String body = Files.readString(Path.of(FileMockPath.FILE_RESERVATION_REQUEST));
+
+        body = body.replace("\"dues\": 6", "\"dues\" : \"DOS\"");
+        MvcResult mvcResult = mockMvc.perform(post("/flight-reservation")
+                                     .content(body)
+                                     .contentType(MediaType.APPLICATION_JSON_VALUE))
+                                     .andExpect(status().is5xxServerError())
+                                     .andReturn();
+
+        ApiError response = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(),
+                new TypeReference<>() {});
+
+        Assertions.assertEquals("internal_error", response.getError());
+        Assertions.assertEquals("Internal server error", response.getMessage());
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatus());
     }
 }
